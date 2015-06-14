@@ -1,2 +1,3 @@
 # bug-free-dubstep
-AngelHack 2015 project
+
+Currently, this site is completely pure hand-crafted static HTML/CSS
