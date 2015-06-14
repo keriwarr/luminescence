@@ -199,7 +199,7 @@ body {
 }
 
 .nav {
-  width: 400px;
+  width: 500px;
 }
 
 .nav-pills>li>a {
@@ -208,4 +208,16 @@ body {
 
 .nav-pills>li.active>a, .nav-pills>li.active>a:focus, .nav-pills>li.active>a:hover {
   background-color: #555;
+}
+
+.written-content h1 {
+  color: #ddd;
+}
+
+.written-content p {
+  color: #ccc;
+}
+
+#run-button {
+  margin-top: 8px;
 }
