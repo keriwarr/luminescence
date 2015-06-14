@@ -24,8 +24,8 @@ function GameGrid(cols, rows, width, height) {
   this.width = width;
   this.height = height;
 
-  this.pathableTexture = PIXI.Texture.fromImage("img/mvp.png");
-  this.unpathableTexture = PIXI.Texture.fromImage("img/spltest.png");
+  this.pathableTexture = PIXI.Texture.fromImage("img/passable.png");
+  this.unpathableTexture = PIXI.Texture.fromImage("img/mvp.png");
 
   this.stage = new PIXI.Container();
   this.grid = [[]];

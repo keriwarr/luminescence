@@ -1,3 +1,4 @@
+var PASS = "p";
 var FORWARD = "f";
 var BACKWARD = "b";
 var TURN_LEFT = "tl";
@@ -18,7 +19,7 @@ var state = {
                     attack_cooldown: 15,
                     heal_cooldown: 20,
                     current_cooldown: 0,
-                    current_action: FORWARD,
+                    current_action: PASS,
                 },
                 {
                     x: 1, y: 3, angle: 0,
@@ -87,10 +88,21 @@ function main() {
     gameGrid.copyTerrain(state.terrain);
 
     // set up players
-    var playerTexture = PIXI.Texture.fromImage("img/test.png");
+    var playerTextures = [
+        [
+            PIXI.Texture.fromImage("img/a.png"),
+            PIXI.Texture.fromImage("img/b.png"),
+            PIXI.Texture.fromImage("img/c.png"),
+        ],
+        [
+            PIXI.Texture.fromImage("img/d.png"),
+            PIXI.Texture.fromImage("img/e.png"),
+            PIXI.Texture.fromImage("img/f.png"),
+        ],
+    ];
     var characterSprites = state.players.map(function(player, i) {
         return player.characters.map(function(character, j) {
-            var sprite = new PIXI.Sprite(playerTexture);
+            var sprite = new PIXI.Sprite(playerTextures[i][j]);
             sprite.anchor.x = sprite.anchor.y = 0.5;
             sprite.scale.x = 2; sprite.scale.y = 2;
             stage.addChild(sprite);
