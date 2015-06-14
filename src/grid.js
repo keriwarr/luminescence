@@ -39,8 +39,8 @@ function GameGrid(cols, rows, width, height) {
 }
 
 GameGrid.prototype.copyTerrain = function(terrainGrid) {
-  for (var i=0; i<cols; i++) {
-    for (var j=0; j<rows; j++) {
+  for (var i=0; i<this.cols; i++) {
+    for (var j=0; j<this.rows; j++) {
       if (terrainGrid[i][j] == 1)
         this.setUnpathable(i, j);
       else

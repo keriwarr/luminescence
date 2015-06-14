@@ -45,20 +45,46 @@ var state = {
         },
     ],
     global_speed: 2, // ticks per second
+    terrain: [
+        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0],
+        [0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0],
+        [0,0,1,0,0,0,1,1,1,1,1,1,1,1,0,0,0,1,0,0],
+        [0,0,1,1,0,0,0,1,1,1,1,1,1,0,0,0,1,1,0,0],
+        [0,0,1,1,1,0,0,0,1,1,1,1,0,0,0,1,1,1,0,0],
+        [0,0,1,1,1,1,0,0,0,1,1,0,0,0,1,1,1,1,0,0],
+        [0,0,1,1,1,1,1,0,0,0,0,0,0,1,1,1,1,1,0,0],
+        [0,0,1,1,1,1,1,1,0,0,0,0,1,1,1,1,1,1,0,0],
+        [0,0,1,1,1,1,1,1,0,0,0,0,1,1,1,1,1,1,0,0],
+        [0,0,1,1,1,1,1,0,0,0,0,0,0,1,1,1,1,1,0,0],
+        [0,0,1,1,1,1,0,0,0,1,1,0,0,0,1,1,1,1,0,0],
+        [0,0,1,1,1,0,0,0,1,1,1,1,0,0,0,1,1,1,0,0],
+        [0,0,1,1,0,0,0,1,1,1,1,1,1,0,0,0,1,1,0,0],
+        [0,0,1,0,0,0,1,1,1,1,1,1,1,1,0,0,0,1,0,0],
+        [0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0],
+        [0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]]
 };
 
 function main() {
     var timestep = 500;
 
-    var renderer = new PIXI.autoDetectRenderer(800, 600);
-    renderer.view.style.width = renderer.view.style.height = "100%";
+    var renderer = new PIXI.autoDetectRenderer($(document).width(), $(document).height());
+
+    $(window).resize(function(e) {
+        renderer.view.style.width = $("#container").width();
+        renderer.view.style.height = $("#container").height();
+    });
+
     $("#container").append(renderer.view);
     var stage = new PIXI.Container();
 
     // set up grid
     var gameGrid = new GameGrid(20, 20, renderer.width, renderer.height);
     stage.addChild(gameGrid.stage);
-    gameGrid.setUnpathable(3, 4);
+    gameGrid.copyTerrain(state.terrain);
 
     // set up players
     var playerTexture = PIXI.Texture.fromImage("img/test.png");
