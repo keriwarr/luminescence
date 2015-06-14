@@ -141,56 +141,7 @@ function main() {
         // update player position and orientation
         state.players.forEach(function(player, i) {
             player.characters.forEach(function(character, j) {
-                var x = character.x, y = character.y, angle = character.angle;
-                switch (character.current_action) { // interpolate and predict the next player's position
-                    case FORWARD:
-                        var actionElapsedTicks = (character.forward_cooldown - character.current_cooldown) + tickFraction;
-                        var progress = actionElapsedTicks / character.forward_cooldown;
-                        var nextX = character.x + getX(character.angle), nextY = character.y + getY(character.angle);
-                        x += (nextX - character.x) * progress; y += (nextY - character.y) * progress;
-                        break;
-                    case BACKWARD:
-                        var actionElapsedTicks = (character.move_cooldown - character.current_cooldown) + tickFraction;
-                        var progress = actionElapsedTicks / character.move_cooldown;
-                        var nextX = character.x - getX(character.angle), nextY = character.y - getY(character.angle);
-                        x += (nextX - character.x) * progress; y += (nextY - character.y) * progress;
-                        break;
-                    case STRAFE_LEFT:
-                        var actionElapsedTicks = (character.move_cooldown - character.current_cooldown) + tickFraction;
-                        var progress = actionElapsedTicks / character.move_cooldown;
-                        var nextX = character.x + getY(character.angle), nextY = character.y - getX(character.angle);
-                        x += (nextX - character.x) * progress; y += (nextY - character.y) * progress;
-                        break;
-                    case STRAFE_RIGHT:
-                        var actionElapsedTicks = (character.move_cooldown - character.current_cooldown) + tickFraction;
-                        var progress = actionElapsedTicks / character.move_cooldown;
-                        var nextX = character.x - getY(character.angle), nextY = character.y + getX(character.angle);
-                        x += (nextX - character.x) * progress; y += (nextY - character.y) * progress;
-                        break;
-                    case TURN_LEFT: case TURN_RIGHT:
-                        var actionElapsedTicks = (character.turn_cooldown - character.current_cooldown) + tickFraction;
-                        var progress = actionElapsedTicks / character.turn_cooldown;
-                        var nextAngle = character.angle + (character.current_action === TURN_LEFT ? -90 : 90)
-                        angle += (nextAngle - character.angle) * progress;
-                        break;
-                    case ATTACK_RANGED:
-                        var targetX = character.ranged_target.x, targetY = character.ranged_target.y;
-                        if (targetX === nextX) {
-                            rangedSprite.rotation = 0;
-                            rangedSprite.height = (targetY - character.y) * cellY;
-                        } else {
-                            rangedSprite.rotation = Math.PI / 2;
-                            rangedSprite.height = (targetX - character.x) * cellX;
-                        }
-                        rangedSprite.position.x = (character.x + 0.5 + (targetX - character.x) / 2) * cellX;
-                        rangedSprite.position.y = (character.y + 0.5 + (targetY - character.y) / 2) * cellY;
-                        hitSprite.position.x = (targetX + 0.5) * cellX; hitSprite.position.y = (targetY + 0.5) * cellY;
-                        hitSprite.width = hitSprite.height = cellX * 2;
-                        rangedSprite.alpha = hitSprite.alpha = 1;
-                        animate(400, function(progress) { rangedSprite.alpha = hitSprite.alpha = 1 - progress; }, function() { rangedSprite.alpha = hitSprite.alpha = 0; });
-                        character.current_action = PASS; //wip: debug
-                        break;
-                }
+                updateCharacter(character, i, j, tickFraction);
 
                 var sprite = characterSprites[i][j];
                 sprite.position.x = (x + 0.5) * cellX; sprite.position.y = (y + 0.5) * cellY; sprite.rotation = angle * Math.PI / 180;
@@ -217,6 +168,58 @@ function getY(angle) {
     return angle === 0 ? -1 : angle == 180 ? 1 : 0;
 }
 
+function updateCharacter(character, i, j, tickFraction) {
+    var x = character.x, y = character.y, angle = character.angle;
+    switch (character.current_action) { // interpolate and predict the next player's position
+        case FORWARD:
+            var actionElapsedTicks = (character.forward_cooldown - character.current_cooldown) + tickFraction;
+            var progress = actionElapsedTicks / character.forward_cooldown;
+            var nextX = character.x + getX(character.angle), nextY = character.y + getY(character.angle);
+            x += (nextX - character.x) * progress; y += (nextY - character.y) * progress;
+            break;
+        case BACKWARD:
+            var actionElapsedTicks = (character.move_cooldown - character.current_cooldown) + tickFraction;
+            var progress = actionElapsedTicks / character.move_cooldown;
+            var nextX = character.x - getX(character.angle), nextY = character.y - getY(character.angle);
+            x += (nextX - character.x) * progress; y += (nextY - character.y) * progress;
+            break;
+        case STRAFE_LEFT:
+            var actionElapsedTicks = (character.move_cooldown - character.current_cooldown) + tickFraction;
+            var progress = actionElapsedTicks / character.move_cooldown;
+            var nextX = character.x + getY(character.angle), nextY = character.y - getX(character.angle);
+            x += (nextX - character.x) * progress; y += (nextY - character.y) * progress;
+            break;
+        case STRAFE_RIGHT:
+            var actionElapsedTicks = (character.move_cooldown - character.current_cooldown) + tickFraction;
+            var progress = actionElapsedTicks / character.move_cooldown;
+            var nextX = character.x - getY(character.angle), nextY = character.y + getX(character.angle);
+            x += (nextX - character.x) * progress; y += (nextY - character.y) * progress;
+            break;
+        case TURN_LEFT: case TURN_RIGHT:
+            var actionElapsedTicks = (character.turn_cooldown - character.current_cooldown) + tickFraction;
+            var progress = actionElapsedTicks / character.turn_cooldown;
+            var nextAngle = character.angle + (character.current_action === TURN_LEFT ? -90 : 90)
+            angle += (nextAngle - character.angle) * progress;
+            break;
+        case ATTACK_RANGED:
+            var targetX = character.ranged_target.x, targetY = character.ranged_target.y;
+            if (targetX === nextX) {
+                rangedSprite.rotation = 0;
+                rangedSprite.height = (targetY - character.y) * cellY;
+            } else {
+                rangedSprite.rotation = Math.PI / 2;
+                rangedSprite.height = (targetX - character.x) * cellX;
+            }
+            rangedSprite.position.x = (character.x + 0.5 + (targetX - character.x) / 2) * cellX;
+            rangedSprite.position.y = (character.y + 0.5 + (targetY - character.y) / 2) * cellY;
+            hitSprite.position.x = (targetX + 0.5) * cellX; hitSprite.position.y = (targetY + 0.5) * cellY;
+            hitSprite.width = hitSprite.height = cellX * 2;
+            rangedSprite.alpha = hitSprite.alpha = 1;
+            animate(400, function(progress) { rangedSprite.alpha = hitSprite.alpha = 1 - progress; }, function() { rangedSprite.alpha = hitSprite.alpha = 0; });
+            character.current_action = PASS; //wip: debug
+            break;
+    }
+}
 
 // initialize animations
 var animations = [];
