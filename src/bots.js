@@ -17,7 +17,7 @@ var state = {
                     turn_cooldown: 2,
                     attack_cooldown: 15,
                     heal_cooldown: 20,
-                    current_cooldown: 2,
+                    current_cooldown: 0,
                     current_action: FORWARD,
                 },
                 {
@@ -27,7 +27,7 @@ var state = {
                     turn_cooldown: 2,
                     attack_cooldown: 15,
                     heal_cooldown: 20,
-                    current_cooldown: 2,
+                    current_cooldown: 0,
                     current_action: BACKWARD,
                 },
                 {
@@ -91,36 +91,39 @@ function main() {
         
         // update movement animations for the characters
         var tickFraction = accumulator / timestep;
-        
         var cellX = gameGrid.cellDimension("width"), cellY = gameGrid.cellDimension("height");
         
         // update player position and orientation
         state.players.forEach(function(player, i) {
             player.characters.forEach(function(character, j) {
-                var actionElapsedTicks = (character.forward_cooldown - character.current_cooldown) + tickFraction;
                 var x = character.x, y = character.y, angle = character.angle;
                 switch (character.current_action) { // interpolate and predict the next player's position
                     case FORWARD:
+                        var actionElapsedTicks = (character.forward_cooldown - character.current_cooldown) + tickFraction;
                         var progress = actionElapsedTicks / character.forward_cooldown;
                         var nextX = character.x + getX(character.angle), nextY = character.y + getY(character.angle);
                         x += (nextX - character.x) * progress; y += (nextY - character.y) * progress;
                         break;
                     case BACKWARD:
+                        var actionElapsedTicks = (character.move_cooldown - character.current_cooldown) + tickFraction;
                         var progress = actionElapsedTicks / character.move_cooldown;
                         var nextX = character.x - getX(character.angle), nextY = character.y - getY(character.angle);
                         x += (nextX - character.x) * progress; y += (nextY - character.y) * progress;
                         break;
                     case STRAFE_LEFT:
+                        var actionElapsedTicks = (character.move_cooldown - character.current_cooldown) + tickFraction;
                         var progress = actionElapsedTicks / character.move_cooldown;
                         var nextX = character.x + getY(character.angle), nextY = character.y - getX(character.angle);
                         x += (nextX - character.x) * progress; y += (nextY - character.y) * progress;
                         break;
                     case STRAFE_RIGHT:
+                        var actionElapsedTicks = (character.move_cooldown - character.current_cooldown) + tickFraction;
                         var progress = actionElapsedTicks / character.move_cooldown;
                         var nextX = character.x - getY(character.angle), nextY = character.y + getX(character.angle);
                         x += (nextX - character.x) * progress; y += (nextY - character.y) * progress;
                         break;
                     case TURN_LEFT: case TURN_RIGHT:
+                        var actionElapsedTicks = (character.turn_cooldown - character.current_cooldown) + tickFraction;
                         var progress = actionElapsedTicks / character.turn_cooldown;
                         var nextAngle = character.angle + (character.current_action === TURN_LEFT ? -90 : 90)
                         angle += (nextAngle - character.angle) * progress;
@@ -132,8 +135,6 @@ function main() {
                 sprite.width = sprite.height = cellX;
             });
         });
-        
-        stepAnimations(dt);
 
         gameGrid.update();
         renderer.render(stage);
@@ -149,29 +150,6 @@ function getX(angle) {
 function getY(angle) {
     angle = angle % 360; if (angle < 0) angle += 360;
     return angle === 0 ? -1 : angle == 180 ? 1 : 0;
-}
-
-// initialize animations
-var animations = [];
-function animate(duration, stepCallback, doneCallback) {
-    animation.push({
-        progress: 0,
-        duration: duration,
-        stepCallback: stepCallback || function(progress) {},
-        doneCallback: doneCallback || function(progress) {},
-    })
-}
-function stepAnimations(dt) {
-    // process animations
-    var completedAnimations = {};
-    animations.forEach(function(animation, i) {
-        animation.progress += dt / animation.duration;
-        if (animation.progress >= 1) {
-            animationcompletedAnimations[i] = true;
-            animation.doneCallback();
-        } else animation.stepCallback();
-    });
-    animations = animations.filter(function(animation, i) { return !completedAnimation.hasOwnProperty(i); })
 }
 
 $(main);
