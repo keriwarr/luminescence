@@ -140,8 +140,8 @@ function main() {
         });
     }
     
-    var lastStep = Date.now();
-    var accumulator = 0;
+    var lastStep = null;
+    var accumulator = null;
     function onStep() {
         if (!RUNNING) {
             gameGrid.update();
@@ -149,6 +149,11 @@ function main() {
             requestAnimationFrame(onStep);
             return;
         }
+        if (lastStep === null) {
+            lastStep = Date.now();
+            accumulator = 0;
+        }
+        
         var cellX = gameGrid.cellDimension("width"), cellY = gameGrid.cellDimension("height");
         
         var now = Date.now(); var dt = now - lastStep; lastStep = now;
