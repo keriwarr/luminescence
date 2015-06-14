@@ -62,13 +62,18 @@ function main() {
     var cellX = 64, cellY = 64;
     var timestep = 500;
 
-    var renderer = new PIXI.CanvasRenderer(800, 600);
-    document.body.appendChild(renderer.view);
+    var renderer = new PIXI.autoDetectRenderer(800, 600);
+    renderer.view.style.width = renderer.view.style.height = "100%";
+    $("#container").append(renderer.view);
     var stage = new PIXI.Container();
 
-    var playerTexture = PIXI.Texture.fromImage("img/test.png");
+    // set up grid
+    var gameGrid = new GameGrid(10, 10, renderer.width, renderer.height);
+    stage.addChild(gameGrid.stage);
+    gameGrid.setUnPathable(3, 4);
 
     // set up players
+    var playerTexture = PIXI.Texture.fromImage("img/test.png");
     var characterSprites = state.players.map(function(player, i) {
         return player.characters.map(function(character, j) {
             var sprite = new PIXI.Sprite(playerTexture);
@@ -140,6 +145,7 @@ function main() {
         
         stepAnimations(dt);
 
+        gameGrid.update();
         renderer.render(stage);
         requestAnimationFrame(onStep);
     }
