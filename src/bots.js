@@ -141,10 +141,10 @@ function main() {
         // update player position and orientation
         state.players.forEach(function(player, i) {
             player.characters.forEach(function(character, j) {
-                updateCharacter(character, i, j, tickFraction);
+                var values = updateCharacter(cellX, cellY, character, i, j, tickFraction, rangedSprite, hitSprite);
 
                 var sprite = characterSprites[i][j];
-                sprite.position.x = (x + 0.5) * cellX; sprite.position.y = (y + 0.5) * cellY; sprite.rotation = angle * Math.PI / 180;
+                sprite.position.x = (values.x + 0.5) * cellX; sprite.position.y = (values.y + 0.5) * cellY; sprite.rotation = values.angle * Math.PI / 180;
                 sprite.width = sprite.height = cellX;
             });
         });
@@ -168,7 +168,7 @@ function getY(angle) {
     return angle === 0 ? -1 : angle == 180 ? 1 : 0;
 }
 
-function updateCharacter(character, i, j, tickFraction) {
+function updateCharacter(cellX, cellY, character, i, j, tickFraction, rangedSprite, hitSprite) {
     var x = character.x, y = character.y, angle = character.angle;
     switch (character.current_action) { // interpolate and predict the next player's position
         case FORWARD:
@@ -219,6 +219,7 @@ function updateCharacter(character, i, j, tickFraction) {
             character.current_action = PASS; //wip: debug
             break;
     }
+    return {x: x, y: y, angle: angle};
 }
 
 // initialize animations
