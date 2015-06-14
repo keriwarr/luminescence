@@ -144,6 +144,8 @@ function main() {
     var accumulator = 0;
     function onStep() {
         if (!RUNNING) {
+            gameGrid.update();
+            renderer.render(stage);
             requestAnimationFrame(onStep);
             return;
         }

@@ -182,7 +182,7 @@ var unit = function unit(x, y, choose_action) {
     this.angle = 0; // degrees. 0 <= angle <= 360, with 0 being straight up
 
     this.choose_action = choose_action;
-    
+
     this.max_health = default_health;
     this.health = default_health;
 
@@ -264,63 +264,15 @@ unit.prototype.execute_action = function (game_state) {
 }
 
 unit.prototype.acquire_target = function(game_state) {
-    var target_y = this.y;
-    var target_x = this.x;
-
-    switch (this.angle) {
-        case 0:
-            target_y--;
-            break;
-        case 90:
-            target_x++;
-            break;
-        case 180:
-            target_y++;
-            break;
-        case 270:
-            target_x--;
-            break;
-    }
-
+    target_x = this.x + getX(this.angle), target_y = this.y + getY(this.angle);
     while (game_state.is_tile_pathable(target_x, target_y)) {
-
-        switch (this.angle) {
-            case 0:
-                target_y--;
-                break;
-            case 90:
-                target_x++;
-                break;
-            case 180:
-                target_y++;
-                break;
-            case 270:
-                target_x--;
-                break;
-        }
-
-    } 
-
+        target_x += getX(this.angle); target_y += getY(this.angle);
+    }
     return {x: target_x, y: target_y}
 }
 
 unit.prototype.move = function (move_direction, move_speed, game_map) {
-    move_direction = move_direction % 360; if (move_direction < 0) move_direction += 360;
-
-    switch(move_direction) {
-        case 0:
-            this.y--;
-            break;
-        case 90:
-            this.x++;
-            break;
-        case 180:
-            this.y++;
-            break;
-        case 270:
-            this.x--;
-            break;
-    }
+    this.x += getX(move_direction); this.y += getY(move_direction);
 
     if (move_speed == 'normal') {
         this.current_cooldown = this.cooldowns['move_normal'];
@@ -449,3 +401,43 @@ unit.prototype.get_attributes = function() {
 unit.prototype.get_info = function() {
     return this;
 }
+
+// An example function - this is what the function the user writes, calling our API, would look like
+
+unit.prototype.choose_action = function choose_action(game_state) {
+    // attempt to move toward advantagous position, when strafing into the path of en enemy from behind
+    var target_x = this.x + getX(this.angle) + getY(this.angle), target_y = this.y + getY(this.angle) - getX(this.angle);
+    while (game_state.is_tile_pathable(target_x, target_y))
+        target_x += getX(this.angle); target_y += getY(this.angle);
+    var unit_to_attack = game_state.get_unit_in_tile(target_x, target_y);
+    if (unit_to_attack !== null && getX(unit_to_attack.angle) == getX(this.angle) && getY(unit_to_attack.angle) == getY(this.angle))
+        return "strafe_right"; // unit is facing away from the player, and we can strafe in immediately
+    var target_x = this.x + getX(this.angle) - getY(this.angle), target_y = this.y + getY(this.angle) + getX(this.angle);
+    while (game_state.is_tile_pathable(target_x, target_y))
+        target_x += getX(this.angle); target_y += getY(this.angle);
+    var unit_to_attack = game_state.get_unit_in_tile(target_x, target_y);
+    if (unit_to_attack !== null && getX(unit_to_attack.angle) == getX(this.angle) && getY(unit_to_attack.angle) == getY(this.angle))
+        return "strafe_left"; // unit is facing away from the player, and we can strafe in immediately
+
+    // attack enemy in line of sight
+    var attack_target = this.acquire_target(game_state);
+    var unit_to_attack = game_state.get_unit_in_tile(attack_target.x, attack_target.y);
+    if (unit_to_attack !== null) {
+        return "ranged_attack";
+    }
+
+    return valid_actions[Math.floor(Math.random() * valid_actions.length)];
+}
+
+// The API functions we expose to the user
+
+function getX(angle) {
+    angle = angle % 360; if (angle < 0) angle += 360;
+    return angle === 90 ? 1 : angle == 270 ? -1 : 0;
+}
+function getY(angle) {
+    angle = angle % 360; if (angle < 0) angle += 360;
+    return angle === 0 ? -1 : angle == 180 ? 1 : 0;
+}
+
+//NOT IMPLEMENTED
