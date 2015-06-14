@@ -216,8 +216,13 @@ body {
 
 .written-content p {
   color: #ccc;
+  font-size: 18px;
 }
 
 #run-button {
   margin-top: 8px;
+}
+
+.written-content .container {
+  padding-right: 400px;
 }
