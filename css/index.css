@@ -13,8 +13,8 @@ body {
 }
   
 .navbar-default a.navbar-brand {
-  color:#000;
-  font-size:22px; 
+  color:#000 !important;
+  font-size:22px !important; 
 }
 .navbar-default .navbar-nav li a {
   color: #333;

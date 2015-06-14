@@ -13,51 +13,57 @@
 </head>
 <body>
   
-  <nav class="navbar navbar-default navbar-fixed-top">
+  <nav class="navbar navbar-default navbar-fixed-top nav-tabs">
     <div class="container">
-      <div class="navbar-header">
-        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse">
-          <span class="sr-only">Toggle navigation</span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-        </button>
-        <a class="navbar-brand" href="#">PROXY</a>
-      </div>
       <div class="navbar-collapse collapse" id="navbar-collapse-1">
         <ul class="nav navbar-nav">
-          <li><a href="#">Instructions</a></li>
-          <li><a href="#">About</a></li>
+          <li><a class="navbar-brand" href="#home" data-toggle="tab">PROXY</a></li>
+          <li><a href="#instructions" data-toggle="tab">Instructions</a></li>
+          <li><a href="#about" data-toggle="tab">About</a></li>
         </ul>
       </div>
     </div>
   </nav>
-  <div class="wrapper">
-    <div class="resize" id="game-view">
-      <div class="canvas-wrapper">
-        <div id="container"></div>
-      </div>  
-    </div>
-    <div id="game-code">
-      <div class="half-height resize-vertical" id="code-palyer-1">
-        <ul class="nav nav-pills">
-          <li class="disabled"><a style="cursor: default;" href="#">Player One</a></li>
-          <li class="active"><a class="file-switch" id="p1-all"href="#">All</a></li>
-          <li><a class="file-switch" id="p1-unit1" href="#">Unit 1</a></li>
-          <li><a class="file-switch" id="p1-unit2" href="#">Unit 2</a></li>
-          <li><a class="file-switch" id="p1-unit3" href="#">Unit 3</a></li>
-        </ul>
-        <div class="inner" id="editor1"></div>
+  <div class="wrapper tab-content">
+    <div class="tab-pane active" id="home">
+      <div class="resize" id="game-view">
+        <div class="canvas-wrapper">
+          <div id="container"></div>
+        </div>  
       </div>
-      <div class="half-height" id="code-player-2">
-        <ul class="nav nav-pills">
-          <li class="disabled"><a style="cursor: default;" href="#">Player Two</a></li>
-          <li class="active"><a class="file-switch" id="p2-all" href="#">All</a></li>
-          <li><a class="file-switch" id="p2-unit1" href="#">Unit 1</a></li>
-          <li><a class="file-switch" id="p2-unit2" href="#">Unit 2</a></li>
-          <li><a class="file-switch" id="p2-unit3" href="#">Unit 3</a></li>
-        </ul>
-        <div class="inner" id="editor2"></div>
+      <div id="game-code">
+        <div class="half-height resize-vertical" id="code-palyer-1">
+          <ul class="nav nav-pills">
+            <li class="disabled"><a style="cursor: default;" href="#">Player One</a></li>
+            <li class="active"><a class="file-switch" id="p1-all"href="#">All</a></li>
+            <li><a class="file-switch" id="p1-unit1" href="#">Unit 1</a></li>
+            <li><a class="file-switch" id="p1-unit2" href="#">Unit 2</a></li>
+            <li><a class="file-switch" id="p1-unit3" href="#">Unit 3</a></li>
+          </ul>
+          <div class="inner" id="editor1"></div>
+        </div>
+        <div class="half-height" id="code-player-2">
+          <ul class="nav nav-pills">
+            <li class="disabled"><a style="cursor: default;" href="#">Player Two</a></li>
+            <li class="active"><a class="file-switch" id="p2-all" href="#">All</a></li>
+            <li><a class="file-switch" id="p2-unit1" href="#">Unit 1</a></li>
+            <li><a class="file-switch" id="p2-unit2" href="#">Unit 2</a></li>
+            <li><a class="file-switch" id="p2-unit3" href="#">Unit 3</a></li>
+          </ul>
+          <div class="inner" id="editor2"></div>
+        </div>
+      </div>
+    </div>
+    <div class="tab-pane" id="instructions">
+      <div class="container">
+        <!-- TODO: Jordan -->
+        <h1>header</h1>
+        <p>wat</p>
+        <code>like this</code>
+      </div>
+    </div>
+    <div class="tab-pane" id="about">
+      <div class="container">
       </div>
     </div>
   </div>
