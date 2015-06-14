@@ -25,7 +25,7 @@ function GameGrid(cols, rows, width, height) {
   this.height = height;
 
   this.pathableTexture = PIXI.Texture.fromImage("img/mvp.png");
-  this.unPathableTexture = PIXI.Texture.fromImage("img/spltest.png");
+  this.unpathableTexture = PIXI.Texture.fromImage("img/spltest.png");
 
   this.stage = new PIXI.Container();
   this.grid = [[]];
@@ -42,7 +42,9 @@ GameGrid.prototype.copyTerrain = function(terrainGrid) {
   for (var i=0; i<cols; i++) {
     for (var j=0; j<rows; j++) {
       if (terrainGrid[i][j] == 1)
-        this.setUnPathable(i, j);
+        this.setUnpathable(i, j);
+      else
+        this.setPathable(i, j);
     }
   }
 }
@@ -62,9 +64,13 @@ GameGrid.prototype.cellDimension = function(direction) {
   return dimension / numeration;
 }
 
-GameGrid.prototype.setUnPathable = function(x, y) {
+GameGrid.prototype.setUnpathable = function(x, y) {
   this.grid[x][y].pathable = false;
-  this.grid[x][y].texture = this.unPathableTexture;
+  this.grid[x][y].texture = this.unpathableTexture;
+}
+GameGrid.prototype.setPathable = function(x, y) {
+  this.grid[x][y].pathable = true;
+  this.grid[x][y].texture = this.pathableTexture;
 }
 
 GameGrid.prototype.update = function() {

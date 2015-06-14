@@ -17,7 +17,7 @@ var state = {
                     turn_cooldown: 2,
                     attack_cooldown: 15,
                     heal_cooldown: 20,
-                    current_cooldown: 1,
+                    current_cooldown: 2,
                     current_action: FORWARD,
                 },
                 {
@@ -45,21 +45,9 @@ var state = {
         },
     ],
     global_speed: 2, // ticks per second
-    terrain: [
-        [0, 0, 0, 0, 0, 0, 0, 1, 0],
-        [0, 0, 0, 0, 0, 0, 0, 1, 0],
-        [0, 0, 0, 0, 0, 0, 0, 1, 0],
-        [0, 0, 0, 0, 0, 0, 0, 1, 0],
-        [0, 0, 0, 0, 0, 0, 0, 1, 0],
-        [0, 0, 0, 0, 0, 0, 0, 1, 0],
-        [0, 0, 0, 0, 0, 0, 0, 1, 0],
-        [0, 0, 0, 0, 0, 0, 0, 1, 0],
-        [0, 0, 0, 0, 0, 0, 0, 1, 0],
-    ],
 };
 
 function main() {
-    var cellX = 64, cellY = 64;
     var timestep = 500;
 
     var renderer = new PIXI.autoDetectRenderer(800, 600);
@@ -68,16 +56,15 @@ function main() {
     var stage = new PIXI.Container();
 
     // set up grid
-    var gameGrid = new GameGrid(10, 10, renderer.width, renderer.height);
+    var gameGrid = new GameGrid(20, 20, renderer.width, renderer.height);
     stage.addChild(gameGrid.stage);
-    gameGrid.setUnPathable(3, 4);
+    gameGrid.setUnpathable(3, 4);
 
     // set up players
     var playerTexture = PIXI.Texture.fromImage("img/test.png");
     var characterSprites = state.players.map(function(player, i) {
         return player.characters.map(function(character, j) {
             var sprite = new PIXI.Sprite(playerTexture);
-            sprite.width = sprite.height = cellX;
             sprite.anchor.x = sprite.anchor.y = 0.5;
             sprite.scale.x = 2; sprite.scale.y = 2;
             stage.addChild(sprite);
@@ -104,6 +91,8 @@ function main() {
         
         // update movement animations for the characters
         var tickFraction = accumulator / timestep;
+        
+        var cellX = gameGrid.cellDimension("width"), cellY = gameGrid.cellDimension("height");
         
         // update player position and orientation
         state.players.forEach(function(player, i) {
@@ -139,7 +128,8 @@ function main() {
                 }
 
                 var sprite = characterSprites[i][j];
-                sprite.position.x = x * cellX; sprite.position.y = y * cellY; sprite.rotation = angle * Math.PI / 180;
+                sprite.position.x = (x - 0.5) * cellX; sprite.position.y = (y - 0.5) * cellY; sprite.rotation = angle * Math.PI / 180;
+                sprite.width = sprite.height = cellX;
             });
         });
         
