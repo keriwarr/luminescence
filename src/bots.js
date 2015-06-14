@@ -88,11 +88,36 @@ function main() {
         return player.units.map(function(character, j) { return 0; });
     });
     
+    var hasWon = false;
+    function checkforWinner(state) {
+       state.players.forEach(function(player, i) {
+           var teamAllDead = true;
+           player.units.forEach(function(character, j) {
+               if (character.health > 0)         
+                   teamAllDead = false;
+           });
+           if (teamAllDead){
+               var winnerNumber = state.players.map(function(pl, i) {
+                   return i + 1;
+               }).filter(function(pl, i) {
+                   if (pl != player){
+                       return true;
+                   }
+               })[0];
+               if (!hasWon) {
+                    var winText = new PIXI.Text('Player ' + winnerNumber + ' wins!',{font : '200px Arial', fill : 0xff1010, align : 'center'});
+                    stage.addChild(winText);
+                }
+           }
+       });
+   }
+    
     function onTick(cellX, cellY) {
         // Call into the game logic
         game_state.update(); // call this every time you want a timer tick
         
         var state = get_game_state();
+        checkforWinner(state);
         state.players.forEach(function(player, i) {
             player.units.forEach(function(character, j) {
                 if (character.just_died == true) {
