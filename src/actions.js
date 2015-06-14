@@ -176,11 +176,13 @@ player.prototype.get_unit = function (index) {
 
 // unit stuff
 
-var unit = function unit(x, y) {
+var unit = function unit(x, y, choose_action) {
     this.x = x;
     this.y = y;
     this.angle = 0; // degrees. 0 <= angle <= 360, with 0 being straight up
 
+    this.choose_action = choose_action;
+    
     this.max_health = default_health;
     this.health = default_health;
 
@@ -197,7 +199,7 @@ var unit = function unit(x, y) {
 }
 
 unit.prototype.execute_action = function (game_state) {
-    action_choice = this.choose_action(game_state); // this would be given by the user's fn
+    action_choice = this.choose_action(this, game_state, valid_actions); // this would be given by the user's fn
     this.attack_target = null;
 
     switch(action_choice) {
@@ -349,16 +351,6 @@ unit.prototype.turn = function (turn_direction) {
 
 function get_game_state() {
     return game_state;
-}
-
-// An example function - this is what the function the user writes, calling our API, would look like
-
-unit.prototype.choose_action = function choose_action(game_state) {
-    var attack_target = this.acquire_target(game_state);
-    var unit_to_attack = game_state.get_unit_in_tile(attack_target.x, attack_target.y);
-    if (unit_to_attack !== null) { return "ranged_attack"; }
-
-    return valid_actions[Math.floor(Math.random() * valid_actions.length)];
 }
 
 // The API functions we expose to the user. The user CANNOT use anything not written here.

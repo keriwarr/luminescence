@@ -10,13 +10,24 @@ var HEAL = "heal";
 
 var COLS = 24, ROWS = 24;
 
+var RUNNING = false;
+
+var choose_action1 = function() { return PASS; }, choose_action2 = function() { return PASS; };
+var player1 = null, player2 = null;
+function reset(code1, code2) {
+    choose_action1 = new Function(code1)();
+    choose_action2 = new Function(code2)();
+    player1.units = [new unit(1, 3, choose_action1), new unit(12, 17, choose_action1), new unit(23, 23, choose_action1)];
+    player2.units = [new unit(5, 1, choose_action2), new unit(17, 12, choose_action2), new unit(22, 10, choose_action2)];
+}
+
 function main() {
     var timestep = 25;
 
     game_state = new game_state(COLS, ROWS);
     player1 = new player(); player2 = new player();
-    player1.units.push(new unit(1, 3)); player1.units.push(new unit(12, 17)); player1.units.push(new unit(23, 23));
-    player2.units.push(new unit(5, 1)); player2.units.push(new unit(17, 12)); player2.units.push(new unit(22, 10));
+    player1.units.push(new unit(1, 3, choose_action1)); player1.units.push(new unit(12, 17, choose_action1)); player1.units.push(new unit(23, 23, choose_action1));
+    player2.units.push(new unit(5, 1, choose_action2)); player2.units.push(new unit(17, 12, choose_action2)); player2.units.push(new unit(22, 10, choose_action2));
     game_state.players.push(player1);
     game_state.players.push(player2);
     var initialState = get_game_state();
@@ -84,7 +95,6 @@ function main() {
         var state = get_game_state();
         state.players.forEach(function(player, i) {
             player.units.forEach(function(character, j) {
-                console.log(character.just_died);
                 if (character.just_died == true) {
                     var deathSprite = new PIXI.Sprite(PIXI.Texture.fromImage("img/hit1.png"));
                     deathSprite.anchor.x = deathSprite.anchor.y = 0.5;
@@ -133,6 +143,10 @@ function main() {
     var lastStep = Date.now();
     var accumulator = 0;
     function onStep() {
+        if (!RUNNING) {
+            requestAnimationFrame(onStep);
+            return;
+        }
         var cellX = gameGrid.cellDimension("width"), cellY = gameGrid.cellDimension("height");
         
         var now = Date.now(); var dt = now - lastStep; lastStep = now;
