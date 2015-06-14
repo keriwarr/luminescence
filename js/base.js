@@ -23,7 +23,7 @@ var userCode = {
 
     editor1 = ace.edit("editor1");
     editor1.getSession().setMode("ace/mode/javascript");
-    editor1.setTheme("ace/theme/merbivore");
+    editor1.setTheme("ace/theme/monokai");
     editor1.setOptions({
         enableBasicAutocompletion: true,
         enableSnippets: true
@@ -51,7 +51,7 @@ var userCode = {
 
     editor2 = ace.edit("editor2");
     editor2.getSession().setMode("ace/mode/javascript");
-    editor2.setTheme("ace/theme/merbivore");
+    editor2.setTheme("ace/theme/monokai");
     editor2.setOptions({
         enableBasicAutocompletion: true,
         enableSnippets: true

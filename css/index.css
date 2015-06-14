@@ -5,28 +5,28 @@ html,body {
 body {
   overflow: hidden;
 }
-/*
+
 .navbar-default {
-  background-color:#fafafa;
+  background-color:#7ae;
   min-height: 40px;
   border-width:0;
 }
   
 .navbar-default a.navbar-brand {
-  color:#FC1298;
+  color:#000;
   font-size:22px; 
-  font-weight:800;
-  text-shadow:0 0 1px rgba(255,0,210, 0.4);
+}
+.navbar-default .navbar-nav li a {
+  color: #333;
+  font-size: 16px;
 }
 
+
+/*
 .navbar-default li>a,.navbar-brand {
  padding-top: 11px;
  padding-bottom: 11px;
  line-height:19px;
-}
-
-.navbar-toggle {
-  padding:5px;
 }*/
 
 .row {
@@ -42,57 +42,6 @@ body {
   border:0px #000 solid;
   height:100%;
 }
-
-/*.pane-settings {
-  background: #002B36;
-  color:#b3b1b1;
-  position: absolute;
-  z-index: 199;
-  padding: 3px;
-  font-size: 16px;
-  opacity: .8;
-  right: 5px;
-  top: 0;
-  margin: 0;
-}
-  
-.pane-panel {
-  background: #001a25;
-  color:#b3b1b1;
-  position: absolute;
-  z-index: 198;
-  right: 5px;
-  top: 28px;
-  margin: 0;
-  width:220px;
-  min-height:100px;
-  display:none;
-}
-
-input[type=radio], input[type=checkbox] {
-  vertical-align:middle;
-    margin-top:-1px;
-}
-.pane-panel .row > [class*='col-']{
-  color:#000;
-    padding:4px;
-    font-size:12px;
-}
-.pane-panel .row > [class*='col-']:nth-child(1) {
-    background-color: rgba(240,240,240,.4);
-}
-.pane-panel .row > [class*='col-']:nth-child(2) {
-    background-color: rgba(240,240,240,.5);
-}
-.pane-panel .row > [class*='col-']:nth-child(3) {
-    background-color: rgba(240,240,240,.6);
-}
-.pane-panel .row > [class*='col-']:nth-child(4) {
-    background-color: rgba(240,240,240,.7);
-}
-.pane-panel .row > [class*='col-']:nth-child(5) {
-    background-color: rgba(240,240,240,.8);
-}*/
 
 .wrapper {
   width:100%;
@@ -213,9 +162,13 @@ body {
 }
 
 .filler-for-canvas {
-  background-color: #fdd;
+  background-color: #000;
   height: 100%;
   width:100%;
+}
+
+.canvas-wrapper {
+  height: 100%;
 }
 
 .no-padding {
@@ -247,4 +200,12 @@ body {
 
 .nav {
   width: 400px;
+}
+
+.nav-pills>li>a {
+  border-radius: 0;
+}
+
+.nav-pills>li.active>a, .nav-pills>li.active>a:focus, .nav-pills>li.active>a:hover {
+  background-color: #555;
 }
