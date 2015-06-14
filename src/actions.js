@@ -13,8 +13,8 @@ var valid_actions = [
 ]
 
 var default_health = 20;
-var default_rows = 10;
-var default_cols = 10;
+var default_rows = 20;
+var default_cols = 20;
 
 var default_cooldowns = {
     'ranged_attack' : 15,
@@ -128,7 +128,7 @@ var unit = function unit(x, y) {
 }
 
 unit.prototype.execute_action = function (game_state) {
-    action_choice = 'attack'; // this would be given by the user's fn
+    action_choice = 'ranged_attack'; // this would be given by the user's fn
     this.attack_target = null;
 
     switch(action_choice) {
@@ -272,23 +272,6 @@ unit.prototype.turn = function (turn_direction) {
     this.current_cooldown = default_cooldowns['turn']
 }
 
-// example of how to use the engine
-
-game_state = new game_state();
-player1 = new player();
-player2 = new player();
-unitA = new unit(3, 3);
-unitB = new unit(6,4);
-unitC = new unit(8,2);
-
-player1.units.push(unitA);
-player1.units.push(unitB);
-player2.units.push(unitC);
-
-game_state.players.push(player1);
-game_state.players.push(player2);
-
-game_state.update(); // call this every time you want a timer tick
 
 function get_game_state() {
     return game_state;
