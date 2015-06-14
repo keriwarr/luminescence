@@ -72,12 +72,10 @@ var state = {
 function main() {
     var timestep = 500;
 
-    var renderer = new PIXI.autoDetectRenderer($(document).width(), $(document).height());
+    var renderer = new PIXI.autoDetectRenderer(1600, 1600);
 
-    $(window).resize(function(e) {
-        renderer.view.style.width = $("#container").width();
-        renderer.view.style.height = $("#container").height();
-    });
+    $(window).resize(function(e) { renderer.view.style.width = $("#container").width() + "px"; });
+    renderer.view.style.width = $("#container").width() + "px";
 
     $("#container").append(renderer.view);
     var stage = new PIXI.Container();
