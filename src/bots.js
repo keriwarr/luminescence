@@ -5,7 +5,7 @@ var TURN_LEFT = "tl";
 var TURN_RIGHT = "tr";
 var STRAFE_LEFT = "l";
 var STRAFE_RIGHT = "r";
-var ATTACK = "a";
+var ATTACK_RANGED = "ar";
 var HEAD = "h";
 var state = {
     players: [
@@ -19,7 +19,8 @@ var state = {
                     attack_cooldown: 15,
                     heal_cooldown: 20,
                     current_cooldown: 0,
-                    current_action: PASS,
+                    current_action: ATTACK_RANGED,
+                    ranged_target: {x: 5, y: 1},
                 },
                 {
                     x: 1, y: 3, angle: 0,
@@ -84,6 +85,14 @@ function main() {
     var gameGrid = new GameGrid(20, 20, renderer.width, renderer.height);
     stage.addChild(gameGrid.stage);
     gameGrid.copyTerrain(state.terrain);
+
+    // set up ranged attacks
+    var rangedSprite = new PIXI.TilingSprite(PIXI.Texture.fromImage("img/ranged.png"), 128, 0);
+    rangedSprite.anchor.x = rangedSprite.anchor.y = 0.5;
+    stage.addChild(rangedSprite);
+    var hitSprite = new PIXI.Sprite(PIXI.Texture.fromImage("img/hit.png"));
+    hitSprite.anchor.x = hitSprite.anchor.y = 0.5;
+    stage.addChild(hitSprite); hitSprite.alpha = 0;
 
     // set up players
     var playerTextures = [
@@ -164,15 +173,35 @@ function main() {
                         var nextAngle = character.angle + (character.current_action === TURN_LEFT ? -90 : 90)
                         angle += (nextAngle - character.angle) * progress;
                         break;
+                    case ATTACK_RANGED:
+                        var targetX = character.ranged_target.x, targetY = character.ranged_target.y;
+                        if (targetX === nextX) {
+                            rangedSprite.rotation = 0;
+                            rangedSprite.height = (targetY - character.y) * cellY;
+                        } else {
+                            rangedSprite.rotation = Math.PI / 2;
+                            rangedSprite.height = (targetX - character.x) * cellX;
+                        }
+                        rangedSprite.position.x = (character.x + 0.5 + (targetX - character.x) / 2) * cellX;
+                        rangedSprite.position.y = (character.y + 0.5 + (targetY - character.y) / 2) * cellY;
+                        hitSprite.position.x = (targetX + 0.5) * cellX; hitSprite.position.y = (targetY + 0.5) * cellY;
+                        hitSprite.width = hitSprite.height = cellX * 2;
+                        rangedSprite.alpha = hitSprite.alpha = 1;
+                        animate(400, function(progress) { rangedSprite.alpha = hitSprite.alpha = 1 - progress; }, function() { rangedSprite.alpha = hitSprite.alpha = 0; });
+                        character.current_action = PASS; //wip: debug
+                        break;
                 }
 
                 var sprite = characterSprites[i][j];
-                sprite.position.x = (x - 0.5) * cellX; sprite.position.y = (y - 0.5) * cellY; sprite.rotation = angle * Math.PI / 180;
+                sprite.position.x = (x + 0.5) * cellX; sprite.position.y = (y + 0.5) * cellY; sprite.rotation = angle * Math.PI / 180;
                 sprite.width = sprite.height = cellX;
             });
         });
 
         gameGrid.update();
+
+        stepAnimations(dt);
+        
         renderer.render(stage);
         requestAnimationFrame(onStep);
     }
@@ -186,6 +215,30 @@ function getX(angle) {
 function getY(angle) {
     angle = angle % 360; if (angle < 0) angle += 360;
     return angle === 0 ? -1 : angle == 180 ? 1 : 0;
+}
+
+
+// initialize animations
+var animations = [];
+function animate(duration, stepCallback, doneCallback) {
+    animations.push({
+        progress: 0,
+        duration: duration,
+        stepCallback: stepCallback || function(progress) {},
+        doneCallback: doneCallback || function(progress) {},
+    })
+}
+function stepAnimations(dt) {
+    // process animations
+    var completedAnimations = {};
+    animations.forEach(function(animation, i) {
+        animation.progress += dt / animation.duration;
+        if (animation.progress >= 1) {
+            completedAnimations[i] = true;
+            animation.doneCallback();
+        } else animation.stepCallback(animation.progress);
+    });
+    animations = animations.filter(function(animation, i) { return !completedAnimations.hasOwnProperty(i); })
 }
 
 $(main);
