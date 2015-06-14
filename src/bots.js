@@ -41,13 +41,13 @@ function main() {
     var playerTextures = [
         [
             PIXI.Texture.fromImage("img/a.png"),
-            PIXI.Texture.fromImage("img/b.png"),
-            PIXI.Texture.fromImage("img/c.png"),
+            PIXI.Texture.fromImage("img/a.png"),
+            PIXI.Texture.fromImage("img/a.png"),
         ],
         [
-            PIXI.Texture.fromImage("img/d.png"),
-            PIXI.Texture.fromImage("img/e.png"),
-            PIXI.Texture.fromImage("img/f.png"),
+            PIXI.Texture.fromImage("img/c.png"),
+            PIXI.Texture.fromImage("img/c.png"),
+            PIXI.Texture.fromImage("img/c.png"),
         ],
     ];
 
@@ -84,6 +84,7 @@ function main() {
         var state = get_game_state();
         state.players.forEach(function(player, i) {
             player.units.forEach(function(character, j) {
+                console.log(character.just_died);
                 if (character.just_died == true) {
                     var deathSprite = new PIXI.Sprite(PIXI.Texture.fromImage("img/hit1.png"));
                     deathSprite.anchor.x = deathSprite.anchor.y = 0.5;

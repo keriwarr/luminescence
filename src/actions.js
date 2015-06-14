@@ -361,6 +361,99 @@ unit.prototype.choose_action = function choose_action(game_state) {
     return valid_actions[Math.floor(Math.random() * valid_actions.length)];
 }
 
-// The API functions we expose to the user
+// The API functions we expose to the user. The user CANNOT use anything not written here.
 
-//NOT IMPLEMENTED
+unit.prototype.get_game_state = function get_game_state() {
+    return game_state; //not sure if this is right? @anthony? i think this needs to be changed
+                        // based on your code
+}
+
+unit.prototype.get_map = function get_map() {
+    return this.get_game_state().game_map.terrain;
+}
+
+unit.prototype.get_nearest_ally = function get_nearest_ally() {
+    //not implemented
+}
+
+unit.prototype.get_nearest_enemy = function get_nearest_enemy() {
+    //not implemented
+}
+
+unit.prototype.get_unit_in_sight = function get_unit_in_sight() {
+
+    x = this.acquire_target()[x];
+    y = this.acquire_target()[y];
+
+    if (this.get_map().terrain[x][y] == 1) {
+        return 'wall'
+    }
+
+    for (var i = 0; i < this.get_game_state().players.length; i++) {
+        for (var j = 0; j < this.get_game_state().players[i].units.length; j++) {
+            unit = this.get_game_state().players[i].units[j];
+            if (unit.x == x && unit.y == y) {
+                if (i == 0) {
+                    return 'p1unit'
+                } else {
+                    return 'p2unit'
+                }
+            }
+        }
+    }
+    return null; //should never reach here...
+}
+
+unit.prototype.get_unit_list = function get_unit_list() {
+    unit_list = [];
+
+    for (var i = 0; i < this.get_game_state().players.length; i++) {
+        for (var j = 0; j < this.get_game_state().players[i].units.length; j++) {
+            unit = this.get_game_state().players[i].units[j];
+            if (unit.health > 0) {
+                unit_list.push({'player': i, 'unit': unit});
+            }
+        }
+    }
+
+    return unit_list;
+}
+
+unit.prototype.can_move = function(move_direction, game_map) {
+    move_direction = move_direction % 360; // fix negative edge case shit?
+
+    switch (move_direction) {
+        case 0:
+            return (this.y > 0) && (game_map.terrain[this.x][this.y-1] == 0)
+        case 90:
+            return (this.x < game_map.cols-1) && (game_map.terrain[this.x+1][this.y] == 0)
+        case 180:
+            return (this.y < game_map.rows-1) && (game_map.terrain[this.x][this.y+1] == 0)
+        case 270:
+            return (this.x > 0) && (game_map.terrain[this.x-1][this.y] == 0)
+    }
+}
+
+unit.prototype.is_tile_pathable = function (x, y) {
+    return this.get_game_state().is_tile_pathable(x, y);
+}
+
+unit.prototype.get_unit_in_tile = function(x, y) {
+    return this.get_game_state().get_unit_in_tile(x, y);
+}
+
+unit.prototype.get_valid_actions = function() {
+    return valid_actions;
+}
+
+unit.prototype.get_cooldowns = function() {
+    return this.cooldowns;
+}
+
+unit.prototype.get_attributes = function() {
+    return this.attrs;
+}
+
+unit.prototype.get_info = function() {
+    return this;
+}
