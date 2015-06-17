@@ -107,6 +107,7 @@ function main() {
                if (!hasWon) {
                     var winText = new PIXI.Text('Player ' + winnerNumber + ' wins!',{font : '200px Arial', fill : 0xff1010, align : 'center'});
                     stage.addChild(winText);
+                    hasWon = true;
                 }
            }
        });
