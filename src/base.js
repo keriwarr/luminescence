@@ -29,6 +29,9 @@ var userCode = {
 
 (function() {
 
+    $('#instructions .container').load('../markup/instructions.html');
+    $('#about .container').load('../markup/about.html');
+
     ace.require("ace/ext/language_tools");
 
     editor1 = ace.edit("editor1");
