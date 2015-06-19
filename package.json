@@ -1,0 +1,23 @@
+{
+  "name": "luminescence",
+  "version": "0.1.0",
+  "description": "Competetive AI coding game",
+  "main": "index.js",
+  "dependencies": {
+    "brunch": "^1.8.3"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/KeriWarr/luminescence.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/KeriWarr/luminescence/issues"
+  },
+  "homepage": "https://github.com/KeriWarr/luminescence"
+}
