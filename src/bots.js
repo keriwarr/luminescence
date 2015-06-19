@@ -1,3 +1,6 @@
+var TIMESTEP = 25;
+var COLS = 24, ROWS = 24;
+
 var PASS = "pass";
 var FORWARD = "forward";
 var BACKWARD = "backward";
@@ -8,29 +11,25 @@ var STRAFE_RIGHT = "strafe_right";
 var ATTACK_RANGED = "ranged_attack";
 var HEAL = "heal";
 
-var COLS = 24, ROWS = 24;
-
 var RUNNING = false;
 
-var choose_action1 = function() { return PASS; }, choose_action2 = function() { return PASS; };
+var STATE = new State(COLS, ROWS);
+
+var choose_action1 = function() { return ATTACK_RANGED; }, choose_action2 = function() { return PASS; };
 var player1 = null, player2 = null;
 function reset(code1, code2) {
     choose_action1 = new Function(code1)();
     choose_action2 = new Function(code2)();
-    player1.units = [new unit(1, 3, choose_action1), new unit(12, 17, choose_action1), new unit(23, 23, choose_action1)];
-    player2.units = [new unit(5, 1, choose_action2), new unit(17, 12, choose_action2), new unit(22, 10, choose_action2)];
+    player1.units = [new Unit(STATE, 1, 3, choose_action1), new Unit(STATE, 12, 17, choose_action1), new Unit(STATE, 23, 23, choose_action1)];
+    player2.units = [new Unit(STATE, 5, 1, choose_action2), new Unit(STATE, 17, 12, choose_action2), new Unit(STATE, 22, 10, choose_action2)];
 }
 
 function main() {
-    var timestep = 25;
-
-    game_state = new game_state(COLS, ROWS);
-    player1 = new player(); player2 = new player();
-    player1.units.push(new unit(1, 3, choose_action1)); player1.units.push(new unit(12, 17, choose_action1)); player1.units.push(new unit(23, 23, choose_action1));
-    player2.units.push(new unit(5, 1, choose_action2)); player2.units.push(new unit(17, 12, choose_action2)); player2.units.push(new unit(22, 10, choose_action2));
-    game_state.players.push(player1);
-    game_state.players.push(player2);
-    var initialState = get_game_state();
+    player1 = new Player(); player2 = new Player();
+    player1.units.push(new Unit(STATE, 1, 3, choose_action1)); player1.units.push(new Unit(STATE, 12, 17, choose_action1)); player1.units.push(new Unit(STATE, 23, 23, choose_action1));
+    player2.units.push(new Unit(STATE, 5, 1, choose_action2)); player2.units.push(new Unit(STATE, 17, 12, choose_action2)); player2.units.push(new Unit(STATE, 22, 10, choose_action2));
+    STATE.players.push(player1);
+    STATE.players.push(player2);
 
     var renderer = new PIXI.autoDetectRenderer(1600, 1600);
 
@@ -45,8 +44,7 @@ function main() {
     // set up grid
     var gameGrid = new GameGrid(COLS, ROWS, renderer.width, renderer.height);
     stage.addChild(gameGrid.stage);
-    gameGrid.copyTerrain(initialState.game_map.terrain);
-    
+    gameGrid.copyTerrain(STATE.map.terrain);
 
     // set up players
     var playerTextures = [
@@ -64,7 +62,7 @@ function main() {
 
     var healthBarTexture = PIXI.Texture.fromImage("img/health.png");
 
-    var characterSprites = initialState.players.map(function(player, i) {
+    var characterSprites = STATE.players.map(function(player, i) {
         return player.units.map(function(character, j) {
             var sprite = new PIXI.Sprite(playerTextures[i][j]);
             sprite.anchor.x = sprite.anchor.y = 0.5;
@@ -74,7 +72,7 @@ function main() {
         });
     });
 
-    var characterHealthBars = initialState.players.map(function(player, i) {
+    var characterHealthBars = STATE.players.map(function(player, i) {
         return player.units.map(function(character, j) {
             var sprite = new PIXI.Sprite(healthBarTexture);
             sprite.scale.x = 2; sprite.scale.y = 2;
@@ -82,22 +80,22 @@ function main() {
             return sprite;
         });
     });
-    
-    // mapping from players to the amount of time each one spent in the 
-    var playerAnimationProgress = initialState.players.map(function(player, i) {
+
+    // mapping from players to the amount of time each one spent in the
+    var playerAnimationProgress = STATE.players.map(function(player, i) {
         return player.units.map(function(character, j) { return 0; });
     });
-    
+
     var hasWon = false;
-    function checkforWinner(state) {
-       state.players.forEach(function(player, i) {
+    function checkforWinner(STATE) {
+       STATE.players.forEach(function(player, i) {
            var teamAllDead = true;
            player.units.forEach(function(character, j) {
-               if (character.health > 0)         
+               if (character.health > 0)
                    teamAllDead = false;
            });
            if (teamAllDead){
-               var winnerNumber = state.players.map(function(pl, i) {
+               var winnerNumber = STATE.players.map(function(pl, i) {
                    return i + 1;
                }).filter(function(pl, i) {
                    if (pl != player){
@@ -112,14 +110,12 @@ function main() {
            }
        });
    }
-    
+
     function onTick(cellX, cellY) {
         // Call into the game logic
-        game_state.update(); // call this every time you want a timer tick
-        
-        var state = get_game_state();
-        checkforWinner(state);
-        state.players.forEach(function(player, i) {
+        STATE.update(); // call this every time you want a timer tick
+        checkforWinner(STATE);
+        STATE.players.forEach(function(player, i) {
             player.units.forEach(function(character, j) {
                 if (character.just_died == true) {
                     var deathSprite = new PIXI.Sprite(PIXI.Texture.fromImage("img/hit1.png"));
@@ -157,7 +153,7 @@ function main() {
                     }
                     rangedSprite.position.x = (character.x + 0.5 + (targetX - character.x) / 2) * cellX;
                     rangedSprite.position.y = (character.y + 0.5 + (targetY - character.y) / 2) * cellY;
-                    
+
                     hitSprite.position.x = (targetX + 0.5) * cellX; hitSprite.position.y = (targetY + 0.5) * cellY;
                     hitSprite.width = hitSprite.height = cellX * 2;
                     animate(400, function(progress) { rangedSprite.alpha = hitSprite.alpha = 1 - progress; }, function() { stage.removeChild(rangedSprite); stage.removeChild(hitSprite); });
@@ -165,7 +161,7 @@ function main() {
             });
         });
     }
-    
+
     var lastStep = null;
     var accumulator = null;
     function onStep() {
@@ -179,19 +175,18 @@ function main() {
             lastStep = Date.now();
             accumulator = 0;
         }
-        
-        var cellX = gameGrid.cellDimension("width"), cellY = gameGrid.cellDimension("height");
-        
+
+        var cellX = gameGrid.width / gameGrid.cols, cellY = gameGrid.height / gameGrid.rows;
+
         var now = Date.now(); var dt = now - lastStep; lastStep = now;
         accumulator += dt;
-        while (accumulator >= timestep) { onTick(cellX, cellY); accumulator -= timestep; }
-        var state = get_game_state();
-        
+        while (accumulator >= TIMESTEP) { onTick(cellX, cellY); accumulator -= TIMESTEP; }
+
         // update movement animations for the characters
-        var tickFraction = accumulator / timestep;
-        
+        var tickFraction = accumulator / TIMESTEP;
+
         // update player position and orientation
-        state.players.forEach(function(player, i) {
+        STATE.players.forEach(function(player, i) {
             player.units.forEach(function(character, j) {
                 var sprite = characterSprites[i][j], healthBar = characterHealthBars[i][j];
                 if (character.health <= 0) {
@@ -206,14 +201,14 @@ function main() {
                 healthBar.position.x = sprite.position.x - sprite.width * 0.5;
                 healthBar.position.y = sprite.position.y - sprite.height * 0.5;
                 healthBar.height = sprite.height * 0.10;
-                healthBar.width = sprite.width * (character.health / character.max_health); 
+                healthBar.width = sprite.width * (character.health / character.max_health);
             });
         });
 
         gameGrid.update();
 
         stepAnimations(dt);
-        
+
         renderer.render(stage);
         requestAnimationFrame(onStep);
     }

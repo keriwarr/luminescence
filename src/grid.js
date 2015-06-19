@@ -1,85 +1,65 @@
-function Cell(x, y, width, height, texture) {
-  this.x = x;
-  this.y = y; 
-  this.width = width;
-  this.height = height;
-  this.texture = texture
-  this.sprite = new PIXI.Sprite(texture);
+var passableTexture = PIXI.Texture.fromImage("img/passable.png");
+var unpassableTexture = PIXI.Texture.fromImage("img/unpassable.png");
+function Cell(x, y, width, height, passable) {
+  this.x = x; this.y = y;
+  this.passable = passable || false;
+  this.enabled = false;
+  this.sprite = new PIXI.Sprite(passable ? passableTexture : unpassableTexture);
+  this.sprite.width = width; this.sprite.height = height;
   this.sprite.anchor.x = this.sprite.anchor.y = 0.5;
-  this.sprite.rotation = Math.floor(Math.random() * 4) * Math.PI / 2;
-  this.pathable = true;
+  this.sprite.rotation = Math.floor(Math.random() * 4) * Math.PI / 2; // random orientation
 }
 
-Cell.prototype.update = function(width, height) {
-  this.width = width;
-  this.height = height;
-  this.sprite.texture = this.texture;
-  this.sprite.position.x = (this.x + 0.5) * width;
-  this.sprite.position.y = (this.y + 0.5) * height;
-  this.sprite.width = this.width;
-  this.sprite.height = this.height;
+Cell.prototype.enable = function(stage) {
+  if (this.enabled) { return; }
+  stage.addChild(this.sprite);
+  this.enabled = true;
+}
+Cell.prototype.disable = function(stage) {
+  if (!this.enabled) { return; }
+  stage.removeChild(this.sprite);
+  this.enabled = false;
 }
 
-function GameGrid(cols, rows, width, height) {
-  this.cols = cols;
-  this.rows = rows;
-  this.width = width;
-  this.height = height;
+Cell.prototype.setPassable = function Cell_setPassable(passable) {
+  this.passable = passable;
+  this.sprite.texture = passable ? passableTexture : unpassableTexture;
+}
 
-  this.pathableTexture = PIXI.Texture.fromImage("img/passable.png");
-  this.unpathableTexture = PIXI.Texture.fromImage("img/unpassable.png");
+Cell.prototype.setScale = function Cell_setScale(cellX, cellY) {
+  this.sprite.position.x = (this.x + 0.5) * cellX; this.sprite.position.y = (this.y + 0.5) * cellY;
+  this.sprite.width = cellX; this.sprite.height = cellY;
+}
+
+function GameGrid(rows, cols, width, height) {
+  this.cols = cols; this.rows = rows;
+  this.width = width; this.height = height;
 
   this.stage = new PIXI.Container();
-  this.grid = [[]];
-  for (var i=0; i<cols; i++) {
-    this.grid[i] = [];
-    for (var j=0; j<rows; j++) {
-      this.grid[i][j] = new Cell(i, j, this.cellDimension("width"), this.cellDimension("height"), this.pathableTexture);
-      this.stage.addChild(this.grid[i][j].sprite);
+  this.grid = [];
+  var cellX = this.width / this.cols, cellY = this.height / this.rows;
+  for (var i = 0; i < cols; i ++) {
+    var column = this.grid[i] = [];
+    for (var j = 0; j < rows; j ++) {
+      column[j] = new Cell(i, j, cellX, cellY);
+      column[j].enable(this.stage);
     }
   }
 }
 
 GameGrid.prototype.copyTerrain = function(terrainGrid) {
-  for (var i=0; i<this.cols; i++) {
-    for (var j=0; j<this.rows; j++) {
-      if (terrainGrid[i][j] == 1)
-        this.setUnpathable(i, j);
-      else
-        this.setPathable(i, j);
-    }
-  }
-}
-
-GameGrid.prototype.cellDimension = function(direction) {
-  var dimension;
-  var numeration;
-
-  if (direction == "width") {
-    dimension = this.width;
-    numeration = this.cols;
-  }
-  else {
-    dimension = this.height;
-    numeration = this.rows;
-  }
-  return dimension / numeration;
-}
-
-GameGrid.prototype.setUnpathable = function(x, y) {
-  this.grid[x][y].pathable = false;
-  this.grid[x][y].texture = this.unpathableTexture;
-}
-GameGrid.prototype.setPathable = function(x, y) {
-  this.grid[x][y].pathable = true;
-  this.grid[x][y].texture = this.pathableTexture;
+  this.grid.forEach(function(column, i) {
+    var terrainRow = terrainGrid[i];
+    column.forEach(function(cell, j) {
+      cell.setPassable(terrainRow[j] === 0);
+    });
+  });
 }
 
 GameGrid.prototype.update = function() {
   var classThis = this;
+  var cellX = this.width / this.cols, cellY = this.height / this.rows;
   this.grid.forEach(function(column) {
-    column.forEach(function(cell) {
-      cell.update(classThis.cellDimension("width"), classThis.cellDimension("height"));
-    });
+    column.forEach(function(cell) { cell.setScale(cellX, cellY); });
   });
 }

@@ -119,4 +119,4 @@ return function(unit, state, valid_actions) {
             }
         }
     }
-}       
+}
