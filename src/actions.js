@@ -8,63 +8,26 @@ var valid_actions = [
     'strafe_left',
     'strafe_right',
     'ranged_attack',
-    'pass'
+    'pass',
 ]
 
 var default_health = 20;
-var default_rows = 20;
-var default_cols = 20;
 
 var default_cooldowns = {
-    'ranged_attack' : 15,
-    'move_normal' : 8,
-    'move_slow' : 12,
-    'turn' : 10
+    'ranged_attack': 15,
+    'move_normal':   8,
+    'move_slow':     12,
+    'turn':          10,
 };
 
 var default_attributes = {
     'damage': 5
 }
 
-// map stuff
-
-var game_map = function game_map(cols, rows) {
+function Map(cols, rows) {
     this.terrain = [];
     this.rows = rows;
     this.cols = cols;
-
-    // this.terrain = [
-    //     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    //     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    //     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    //     [0,0,0,0,0,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0],
-    //     [0,0,0,0,0,0,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0],
-    //     [0,0,0,1,0,0,0,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0],
-    //     [0,0,0,1,1,0,0,0,1,1,1,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,1,0,0,0],
-    //     [0,0,0,1,1,1,0,0,0,0,0,0,1,1,1,1,1,0,0,1,0,0,0,0,0,1,1,0,0,0],
-    //     [0,0,0,1,1,1,1,0,0,0,0,1,1,1,1,1,1,1,0,0,0,0,0,0,1,1,1,0,0,0],
-    //     [0,0,0,1,1,1,1,0,0,0,0,1,1,1,1,1,1,1,0,0,0,0,0,1,1,1,1,0,0,0],
-    //     [0,0,0,1,1,1,1,0,0,0,0,0,1,1,1,1,1,0,0,0,0,0,1,1,1,1,1,0,0,0],
-    //     [0,0,0,1,1,1,0,0,1,1,0,0,0,1,1,1,0,0,0,0,0,0,0,1,1,1,1,0,0,0],
-    //     [0,0,0,1,1,1,0,1,1,1,1,0,0,0,1,0,0,0,0,0,1,1,0,0,1,1,1,0,0,0],
-    //     [0,0,0,1,1,1,0,1,1,1,1,1,0,0,0,0,0,0,0,1,1,1,1,0,1,1,1,0,0,0],
-    //     [0,0,0,0,0,0,0,1,1,1,1,1,1,0,0,0,0,0,1,1,1,1,1,0,1,1,1,0,0,0],
-    //     [0,0,0,1,1,1,0,1,1,1,1,1,0,0,0,0,0,1,1,1,1,1,1,0,0,0,0,0,0,0],
-    //     [0,0,0,1,1,1,0,1,1,1,1,0,0,0,0,0,0,0,1,1,1,1,1,0,1,1,1,0,0,0],
-    //     [0,0,0,1,1,1,0,0,1,1,0,0,0,0,0,1,0,0,0,1,1,1,1,0,1,1,1,0,0,0],
-    //     [0,0,0,1,1,1,1,0,0,0,0,0,0,0,1,1,1,0,0,0,1,1,0,0,1,1,1,0,0,0],
-    //     [0,0,0,1,1,1,1,1,0,0,0,0,0,1,1,1,1,1,0,0,0,0,0,1,1,1,1,0,0,0],
-    //     [0,0,0,1,1,1,1,0,0,0,0,0,1,1,1,1,1,1,1,0,0,0,0,1,1,1,1,0,0,0],
-    //     [0,0,0,1,1,1,0,0,0,0,0,0,1,1,1,1,1,1,1,0,0,0,0,1,1,1,1,0,0,0],
-    //     [0,0,0,1,1,0,0,0,0,0,1,0,0,1,1,1,1,1,0,0,0,0,0,0,1,1,1,0,0,0],
-    //     [0,0,0,1,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,1,1,1,0,0,0,1,1,0,0,0],
-    //     [0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,0,0,0,1,0,0,0],
-    //     [0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,0,0,0,0,0,0],
-    //     [0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,0,0,0,0,0],
-    //     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    //     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    //     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-    // ];
     this.terrain = [
         [0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0],
         [0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0],
@@ -89,73 +52,59 @@ var game_map = function game_map(cols, rows) {
         [0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0],
         [0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0],
         [0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0]
-    ]
-
-    // for (var i = 0; i < cols; i++) {
-    //     col = [];
-    //     for (var j = 0; j < rows; j++) {
-    //         col.push(0);
-    //     }
-    //     this.terrain.push(col);
-    // }
+        [0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0],
+    ];
 }
 
-// game state stuff
-
-var game_state = function game_state(cols, rows) {
+function State(cols, rows) {
+    cols = cols || 20; rows = rows || 20;
     this.players = [];
-    this.game_map = new game_map(cols || default_cols, rows || default_rows);
+    this.map = new Map(cols, rows);
 }
 
-game_state.prototype.get_player = function (index)  {
-    return this.players[index];
-}
-
-game_state.prototype.update = function () {
-    for (var i = 0; i < this.players.length; i++) {
-        for (var j = 0; j < this.players[i].units.length; j++) {
-            unit = this.players[i].units[j];
-            if (unit.just_died) unit.just_died = false;
-            if (unit.health <= 0) continue;
-            if (unit.current_cooldown == 0) {
-                unit.execute_action(this);
+State.prototype.update = function State_update() {
+    this.players.forEach(function(player) {
+        player.units.forEach(function(unit) {
+            unit.just_died = false;
+            if (unit.health > 0) {
+                if (unit.current_cooldown == 0) {
+                    unit.execute_action();
+                } else {
+                    unit.current_cooldown --;
+                }
             }
-            else
-            {
-                unit.current_cooldown--;
-            }
-        }
-    } 
+        });
+    });
 }
 
-game_state.prototype.is_tile_pathable = function(x, y) {
-    if (x < 0 || x >= this.game_map.cols){
+State.prototype.is_tile_pathable = function(x, y) {
+    if (x < 0 || x >= this.map.cols){
         return false;
-    } else if (y < 0 || y >= this.game_map.cols){
+    } else if (y < 0 || y >= this.map.cols){
         return false;
     }
 
-    if (this.game_map.terrain[x][y] != 0) {
+    if (this.map.terrain[x][y] != 0) {
         return false;
     }
 
-    for (var i = 0; i < this.players.length; i++) {
-        for (var j = 0; j < this.players[i].units.length; j++) {
-            unit = this.players[i].units[j];
+    for (var i = 0; i < this.players.length; i ++) {
+        var units = this.players[i].units;
+        for (var j = 0; j < units.length; j ++) {
+            var unit = units[j];
             if (unit.x == x && unit.y == y && unit.health > 0) {
                 return false;
             }
         }
     }
-
     return true;
 }
 
-game_state.prototype.get_unit_in_tile = function(x, y) {
-    for (var i = 0; i < this.players.length; i++) {
-        for (var j = 0; j < this.players[i].units.length; j++) {
-            unit = this.players[i].units[j];
+State.prototype.get_unit_in_tile = function(x, y) {
+    for (var i = 0; i < this.players.length; i ++) {
+        var units = this.players[i].units;
+        for (var j = 0; j < units.length; j ++) {
+            var unit = units[j];
             if (unit.x == x && unit.y == y && unit.health > 0) {
                 return unit;
             }
@@ -166,17 +115,12 @@ game_state.prototype.get_unit_in_tile = function(x, y) {
 
 // player stuff
 
-var player = function player() {
+function Player() {
     this.units = [];
 }
 
-player.prototype.get_unit = function (index) {
-    return this.units[index];
-}
-
-// unit stuff
-
-var unit = function unit(x, y, choose_action) {
+function Unit(state, x, y, choose_action) {
+    this.state = state;
     this.x = x;
     this.y = y;
     this.angle = 0; // degrees. 0 <= angle <= 360, with 0 being straight up
@@ -195,50 +139,51 @@ var unit = function unit(x, y, choose_action) {
     this.just_died = false;
 
     this.current_cooldown = 0;
-    cooldowns = default_cooldowns;
 }
 
-unit.prototype.execute_action = function (game_state) {
-    action_choice = this.choose_action(this, game_state, valid_actions); // this would be given by the user's fn
+Unit.prototype.execute_action = function () {
+    var actionChoice = this.choose_action(this, this.state, valid_actions); // this would be given by the user's fn
     this.attack_target = null;
 
-    switch(action_choice) {
+    // check if the action is valid
+    switch(actionChoice) {
         case 'forward':
-            if (!this.can_move(this.angle, game_state.game_map)) {
-                action_choice = 'pass';
+            if (!this.can_move(this.angle)) {
+                actionChoice = 'pass';
             }
             break;
         case 'strafe_right':
-            if (!this.can_move(this.angle + 90, game_state.game_map)) {
-                action_choice = 'pass';
+            if (!this.can_move(this.angle + 90)) {
+                actionChoice = 'pass';
             }
             break;
         case 'backward':
-            if (!this.can_move(this.angle + 180, game_state.game_map)) {
-                action_choice = 'pass';
+            if (!this.can_move(this.angle + 180)) {
+                actionChoice = 'pass';
             }
             break;
         case 'strafe_left':
-            if (!this.can_move(this.angle + 270, game_state.game_map)) {
-                action_choice = 'pass';
+            if (!this.can_move(this.angle + 270)) {
+                actionChoice = 'pass';
             }
             break;
     }
 
-    switch(action_choice) {
+    // execute the action
+    switch(actionChoice) {
         case 'pass':
             break;
         case 'forward':
-            this.move(this.angle, 'normal', game_state.game_map);
+            this.move(this.angle, 'normal');
             break;
         case 'strafe_right':
-            this.move(this.angle + 90, 'slow', game_state.game_map);
+            this.move(this.angle + 90, 'slow');
             break;
         case 'backward':
-            this.move(this.angle + 180, 'slow', game_state.game_map);
+            this.move(this.angle + 180, 'slow');
             break;
         case 'strafe_left':
-            this.move(this.angle + 270, 'slow', game_state.game_map);
+            this.move(this.angle + 270, 'slow');
             break;
         case 'turn_right':
             this.turn(90);
@@ -247,12 +192,12 @@ unit.prototype.execute_action = function (game_state) {
             this.turn(270);
             break;
         case 'ranged_attack':
-            this.attack_target = this.acquire_target(game_state);
-            var unit_to_attack = game_state.get_unit_in_tile(this.attack_target.x, this.attack_target.y);
-            if (unit_to_attack !== null) {
-                unit_to_attack.health -= this.attrs['damage']; // if nothing to attack, just attack the wall
-                if (unit_to_attack.health <= 0)
-                    unit_to_attack.just_died = true;
+            this.attack_target = this.acquire_target();
+            var targetUnit = this.get_unit_in_tile(this.attack_target.x, this.attack_target.y);
+            if (targetUnit !== null) {
+                targetUnit.health -= this.attrs['damage']; // if nothing to attack, just attack the wall
+                if (targetUnit.health <= 0)
+                    targetUnit.just_died = true;
             }
             this.current_cooldown = this.cooldowns['ranged_attack'];
             break;
@@ -260,18 +205,18 @@ unit.prototype.execute_action = function (game_state) {
             break;
     }
 
-    this.previous_action = action_choice;
+    this.previous_action = actionChoice;
 }
 
-unit.prototype.acquire_target = function(game_state) {
+Unit.prototype.acquire_target = function() {
     target_x = this.x + getX(this.angle), target_y = this.y + getY(this.angle);
-    while (game_state.is_tile_pathable(target_x, target_y)) {
+    while (this.is_tile_pathable(target_x, target_y)) {
         target_x += getX(this.angle); target_y += getY(this.angle);
     }
     return {x: target_x, y: target_y}
 }
 
-unit.prototype.move = function (move_direction, move_speed, game_map) {
+Unit.prototype.move = function (move_direction, move_speed) {
     this.x += getX(move_direction); this.y += getY(move_direction);
 
     if (move_speed == 'normal') {
@@ -281,61 +226,37 @@ unit.prototype.move = function (move_direction, move_speed, game_map) {
     }
 }
 
-unit.prototype.can_move = function(move_direction, game_map) {
-    move_direction = move_direction % 360; if (move_direction < 0) move_direction += 360;
 
-    switch (move_direction) {
-        case 0:
-            return (this.y > 0) && (game_map.terrain[this.x][this.y-1] == 0)
-        case 90:
-            return (this.x < game_map.cols-1) && (game_map.terrain[this.x+1][this.y] == 0)
-        case 180:
-            return (this.y < game_map.rows-1) && (game_map.terrain[this.x][this.y+1] == 0)
-        case 270:
-            return (this.x > 0) && (game_map.terrain[this.x-1][this.y] == 0)
-    }
-}
-
-unit.prototype.turn = function (turn_direction) {
+Unit.prototype.turn = function (turn_direction) {
     this.angle = (this.angle + turn_direction) % 360; if (this.angle < 0) this.angle += 360;
     this.current_cooldown = default_cooldowns['turn']
 }
 
-function get_game_state() {
-    return game_state;
-}
-
 // The API functions we expose to the user. The user CANNOT use anything not written here.
 
-unit.prototype.get_game_state = function get_game_state() {
-    return game_state; //not sure if this is right? @anthony? i think this needs to be changed
-                        // based on your code
+Unit.prototype.get_map = function get_map() {
+    return this.state.map.terrain;
 }
 
-unit.prototype.get_map = function get_map() {
-    return this.get_game_state().game_map.terrain;
-}
-
-unit.prototype.get_nearest_ally = function get_nearest_ally() {
+Unit.prototype.get_nearest_ally = function get_nearest_ally() {
     //not implemented
 }
 
-unit.prototype.get_nearest_enemy = function get_nearest_enemy() {
+Unit.prototype.get_nearest_enemy = function get_nearest_enemy() {
     //not implemented
 }
 
-unit.prototype.get_unit_in_sight = function get_unit_in_sight() {
-
-    x = this.acquire_target()[x];
-    y = this.acquire_target()[y];
+Unit.prototype.get_unit_in_sight = function get_unit_in_sight() {
+    x = this.acquire_target(this.state)[x];
+    y = this.acquire_target(this.state)[y];
 
     if (this.get_map().terrain[x][y] == 1) {
         return 'wall'
     }
 
-    for (var i = 0; i < this.get_game_state().players.length; i++) {
-        for (var j = 0; j < this.get_game_state().players[i].units.length; j++) {
-            unit = this.get_game_state().players[i].units[j];
+    for (var i = 0; i < this.state.players.length; i++) {
+        for (var j = 0; j < this.state.players[i].units.length; j++) {
+            unit = this.state.players[i].units[j];
             if (unit.x == x && unit.y == y) {
                 if (i == 0) {
                     return 'p1unit'
@@ -348,12 +269,12 @@ unit.prototype.get_unit_in_sight = function get_unit_in_sight() {
     return null; //should never reach here...
 }
 
-unit.prototype.get_unit_list = function get_unit_list() {
+Unit.prototype.get_unit_list = function get_unit_list() {
     unit_list = [];
 
-    for (var i = 0; i < this.get_game_state().players.length; i++) {
-        for (var j = 0; j < this.get_game_state().players[i].units.length; j++) {
-            unit = this.get_game_state().players[i].units[j];
+    for (var i = 0; i < this.state.players.length; i++) {
+        for (var j = 0; j < this.state.players[i].units.length; j++) {
+            unit = this.state.players[i].units[j];
             if (unit.health > 0) {
                 unit_list.push({'player': i, 'unit': unit});
             }
@@ -363,66 +284,62 @@ unit.prototype.get_unit_list = function get_unit_list() {
     return unit_list;
 }
 
-unit.prototype.can_move = function(move_direction, game_map) {
-    move_direction = move_direction % 360; // fix negative edge case shit?
+Unit.prototype.can_move = function(move_direction) {
+    move_direction = move_direction % 360; if (move_direction < 0) move_direction += 360;
 
     switch (move_direction) {
-        case 0:
-            return (this.y > 0) && (game_map.terrain[this.x][this.y-1] == 0)
-        case 90:
-            return (this.x < game_map.cols-1) && (game_map.terrain[this.x+1][this.y] == 0)
-        case 180:
-            return (this.y < game_map.rows-1) && (game_map.terrain[this.x][this.y+1] == 0)
-        case 270:
-            return (this.x > 0) && (game_map.terrain[this.x-1][this.y] == 0)
+        case 0: return (this.y > 0) && (this.state.map.terrain[this.x][this.y-1] == 0)
+        case 90: return (this.x < this.state.map.cols-1) && (this.state.map.terrain[this.x+1][this.y] == 0)
+        case 180: return (this.y < this.state.map.rows-1) && (this.state.map.terrain[this.x][this.y+1] == 0)
+        case 270: return (this.x > 0) && (this.state.map.terrain[this.x-1][this.y] == 0)
     }
 }
 
-unit.prototype.is_tile_pathable = function (x, y) {
-    return this.get_game_state().is_tile_pathable(x, y);
+Unit.prototype.is_tile_pathable = function (x, y) {
+    return this.state.is_tile_pathable(x, y);
 }
 
-unit.prototype.get_unit_in_tile = function(x, y) {
-    return this.get_game_state().get_unit_in_tile(x, y);
+Unit.prototype.get_unit_in_tile = function(x, y) {
+    return this.state.get_unit_in_tile(x, y);
 }
 
-unit.prototype.get_valid_actions = function() {
+Unit.prototype.get_valid_actions = function() {
     return valid_actions;
 }
 
-unit.prototype.get_cooldowns = function() {
+Unit.prototype.get_cooldowns = function() {
     return this.cooldowns;
 }
 
-unit.prototype.get_attributes = function() {
+Unit.prototype.get_attributes = function() {
     return this.attrs;
 }
 
-unit.prototype.get_info = function() {
+Unit.prototype.get_info = function() {
     return this;
 }
 
 // An example function - this is what the function the user writes, calling our API, would look like
 
-unit.prototype.choose_action = function choose_action(game_state) {
+Unit.prototype.choose_action = function choose_action(unit, state, valid_actions) {
     // attempt to move toward advantagous position, when strafing into the path of en enemy from behind
     var target_x = this.x + getX(this.angle) + getY(this.angle), target_y = this.y + getY(this.angle) - getX(this.angle);
-    while (game_state.is_tile_pathable(target_x, target_y))
+    while (this.is_tile_pathable(target_x, target_y))
         target_x += getX(this.angle); target_y += getY(this.angle);
-    var unit_to_attack = game_state.get_unit_in_tile(target_x, target_y);
-    if (unit_to_attack !== null && getX(unit_to_attack.angle) == getX(this.angle) && getY(unit_to_attack.angle) == getY(this.angle))
+    var targetUnit = this.get_unit_in_tile(target_x, target_y);
+    if (targetUnit !== null && getX(targetUnit.angle) == getX(this.angle) && getY(targetUnit.angle) == getY(this.angle))
         return "strafe_right"; // unit is facing away from the player, and we can strafe in immediately
     var target_x = this.x + getX(this.angle) - getY(this.angle), target_y = this.y + getY(this.angle) + getX(this.angle);
-    while (game_state.is_tile_pathable(target_x, target_y))
+    while (this.is_tile_pathable(target_x, target_y))
         target_x += getX(this.angle); target_y += getY(this.angle);
-    var unit_to_attack = game_state.get_unit_in_tile(target_x, target_y);
-    if (unit_to_attack !== null && getX(unit_to_attack.angle) == getX(this.angle) && getY(unit_to_attack.angle) == getY(this.angle))
+    var targetUnit = this.get_unit_in_tile(target_x, target_y);
+    if (targetUnit !== null && getX(targetUnit.angle) == getX(this.angle) && getY(targetUnit.angle) == getY(this.angle))
         return "strafe_left"; // unit is facing away from the player, and we can strafe in immediately
 
     // attack enemy in line of sight
-    var attack_target = this.acquire_target(game_state);
-    var unit_to_attack = game_state.get_unit_in_tile(attack_target.x, attack_target.y);
-    if (unit_to_attack !== null) {
+    var attack_target = this.acquire_target();
+    var targetUnit = this.get_unit_in_tile(attack_target.x, attack_target.y);
+    if (targetUnit !== null) {
         return "ranged_attack";
     }
 

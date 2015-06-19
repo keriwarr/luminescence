@@ -5,7 +5,7 @@ var editor1, editor2;
 var userCode = {
     player1: [
         'return function(unit, state, valid_actions) {\n' +
-        '    var attack_target = unit.acquire_target(state);\n' +
+        '    var attack_target = unit.acquire_target();\n' +
         '    var unit_to_attack = state.get_unit_in_tile(attack_target.x, attack_target.y);\n' +
         '    if (unit_to_attack !== null) { return "ranged_attack"; }\n' +
         '    return valid_actions[Math.floor(Math.random() * valid_actions.length)];\n' +
@@ -16,7 +16,7 @@ var userCode = {
     ],
     player2: [
         'return function(unit, state, valid_actions) {\n' +
-        '    var attack_target = unit.acquire_target(state);\n' +
+        '    var attack_target = unit.acquire_target();\n' +
         '    var unit_to_attack = state.get_unit_in_tile(attack_target.x, attack_target.y);\n' +
         '    if (unit_to_attack !== null) { return "ranged_attack"; }\n' +
         '    return valid_actions[Math.floor(Math.random() * valid_actions.length)];\n' +
