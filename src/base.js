@@ -1,4 +1,4 @@
-/* global $, ace, reset, isRunning:true */
+/* global $, ace, reset, RUNNING:true */
 
 'use strict';
 
@@ -192,7 +192,7 @@ window.userCode = {
 
     $('#run-button').click(function() {
         reset(editor1.getValue(), editor2.getValue());
-        isRunning = true;
+        RUNNING = true;
     });
 
 }());

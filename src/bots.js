@@ -11,7 +11,7 @@ var STRAFE_RIGHT = "strafe_right";
 var ATTACK_RANGED = "ranged_attack";
 var HEAL = "heal";
 
-var isRunning = false;
+var RUNNING = false;
 
 var STATE = new State(COLS, ROWS);
 
@@ -165,7 +165,7 @@ function main() {
     var lastStep = null;
     var accumulator = null;
     function onStep() {
-        if (!isRunning) {
+        if (!RUNNING) {
             gameGrid.update();
             renderer.render(stage);
             requestAnimationFrame(onStep);
