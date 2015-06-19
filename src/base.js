@@ -29,8 +29,8 @@ var userCode = {
 
 (function() {
 
-    $('#instructions .container').load('/markup/instructions.html');
-    $('#about .container').load('/markup/about.html');
+    $('#instructions .container').load('/luminescence/markup/instructions.html');
+    $('#about .container').load('/luminescence/markup/about.html');
 
     ace.require("ace/ext/language_tools");
 
