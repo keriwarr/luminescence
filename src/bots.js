@@ -80,18 +80,18 @@ function main() {
             return sprite;
         });
     });
-    
-    // mapping from players to the amount of time each one spent in the 
+
+    // mapping from players to the amount of time each one spent in the
     var playerAnimationProgress = STATE.players.map(function(player, i) {
         return player.units.map(function(character, j) { return 0; });
     });
-    
+
     var hasWon = false;
     function checkforWinner(STATE) {
        STATE.players.forEach(function(player, i) {
            var teamAllDead = true;
            player.units.forEach(function(character, j) {
-               if (character.health > 0)         
+               if (character.health > 0)
                    teamAllDead = false;
            });
            if (teamAllDead){
@@ -110,7 +110,7 @@ function main() {
            }
        });
    }
-    
+
     function onTick(cellX, cellY) {
         // Call into the game logic
         STATE.update(); // call this every time you want a timer tick
@@ -153,7 +153,7 @@ function main() {
                     }
                     rangedSprite.position.x = (character.x + 0.5 + (targetX - character.x) / 2) * cellX;
                     rangedSprite.position.y = (character.y + 0.5 + (targetY - character.y) / 2) * cellY;
-                    
+
                     hitSprite.position.x = (targetX + 0.5) * cellX; hitSprite.position.y = (targetY + 0.5) * cellY;
                     hitSprite.width = hitSprite.height = cellX * 2;
                     animate(400, function(progress) { rangedSprite.alpha = hitSprite.alpha = 1 - progress; }, function() { stage.removeChild(rangedSprite); stage.removeChild(hitSprite); });
@@ -161,7 +161,7 @@ function main() {
             });
         });
     }
-    
+
     var lastStep = null;
     var accumulator = null;
     function onStep() {
@@ -175,16 +175,16 @@ function main() {
             lastStep = Date.now();
             accumulator = 0;
         }
-        
+
         var cellX = gameGrid.width / gameGrid.cols, cellY = gameGrid.height / gameGrid.rows;
-        
+
         var now = Date.now(); var dt = now - lastStep; lastStep = now;
         accumulator += dt;
         while (accumulator >= TIMESTEP) { onTick(cellX, cellY); accumulator -= TIMESTEP; }
-        
+
         // update movement animations for the characters
         var tickFraction = accumulator / TIMESTEP;
-        
+
         // update player position and orientation
         STATE.players.forEach(function(player, i) {
             player.units.forEach(function(character, j) {
@@ -201,14 +201,14 @@ function main() {
                 healthBar.position.x = sprite.position.x - sprite.width * 0.5;
                 healthBar.position.y = sprite.position.y - sprite.height * 0.5;
                 healthBar.height = sprite.height * 0.10;
-                healthBar.width = sprite.width * (character.health / character.max_health); 
+                healthBar.width = sprite.width * (character.health / character.max_health);
             });
         });
 
         gameGrid.update();
 
         stepAnimations(dt);
-        
+
         renderer.render(stage);
         requestAnimationFrame(onStep);
     }

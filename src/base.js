@@ -41,11 +41,11 @@ var userCode = {
         enableBasicAutocompletion: true,
         enableSnippets: true
     });
-    editor1.commands.on("afterExec", function(e){ 
+    editor1.commands.on("afterExec", function(e){
         // activate autocomplete when paren or .(dot) is typed
-         if (e.command.name == "insertstring"&&/^[\\.\(.]$/.test(e.args)) { 
-            editor1.execCommand("startAutocomplete") 
-        } 
+         if (e.command.name == "insertstring"&&/^[\\.\(.]$/.test(e.args)) {
+            editor1.execCommand("startAutocomplete")
+        }
     });
     editor1.setShowPrintMargin(false);
     editor1.setDisplayIndentGuides(false);
@@ -59,7 +59,7 @@ var userCode = {
         if (e.data.action === "insertText" && e.data.text.length === 1) {
             userCode.player1[editor1.currentFile] = editor1.getValue();
         }
-    }); 
+    });
 
 
     editor2 = ace.edit("editor2");
@@ -69,11 +69,11 @@ var userCode = {
         enableBasicAutocompletion: true,
         enableSnippets: true
     });
-    editor2.commands.on("afterExec", function(e){ 
+    editor2.commands.on("afterExec", function(e){
         // activate autocomplete when paren or .(dot) is typed
-         if (e.command.name == "insertstring"&&/^[\\.\(.]$/.test(e.args)) { 
-            editor2.execCommand("startAutocomplete") 
-        } 
+         if (e.command.name == "insertstring"&&/^[\\.\(.]$/.test(e.args)) {
+            editor2.execCommand("startAutocomplete")
+        }
     });
     editor2.setShowPrintMargin(false);
     editor2.setDisplayIndentGuides(false);
@@ -87,7 +87,7 @@ var userCode = {
         if (e.data.action === "insertText" && e.data.text.length === 1) {
             userCode.player2[editor2.currentFile] = editor2.getValue();
         }
-    }); 
+    });
 
     var viewportHeight = $(window).height() - 50;
     var viewportWidth = $(window).width();
@@ -125,18 +125,18 @@ var userCode = {
         $(".resize-vertical").resizable("option","maxWidth",viewportHeight - 80);
 
     });
-      
+
     $('.resize').resizable({
-        handles: 'e',  
+        handles: 'e',
         minWidth: 100,
         maxWidth: viewportHeight,
         resize:function(event,ui){
             var x=ui.element.outerWidth();
             var par=$(this).parent().outerWidth();
             var factor = par-x;
-          
+
             $('#game-code').outerWidth(factor-1);
-          
+
             editor1.resize();
             editor2.resize();
         }
@@ -150,9 +150,9 @@ var userCode = {
             var x=ui.element.outerHeight();
             var par=$(this).parent().outerHeight();
             var factor = par-x;
-          
+
             $('#code-player-2').outerHeight(factor-1);
-          
+
             editor1.resize();
             editor2.resize();
         }
@@ -185,7 +185,7 @@ var userCode = {
 
 
     });
-    
+
     $("#run-button").click(function() {
         reset(editor1.getValue(), editor2.getValue());
         RUNNING = true;

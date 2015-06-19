@@ -1,7 +1,7 @@
 var passableTexture = PIXI.Texture.fromImage("img/passable.png");
 var unpassableTexture = PIXI.Texture.fromImage("img/unpassable.png");
 function Cell(x, y, width, height, passable) {
-  this.x = x; this.y = y; 
+  this.x = x; this.y = y;
   this.passable = passable || false;
   this.enabled = false;
   this.sprite = new PIXI.Sprite(passable ? passableTexture : unpassableTexture);
