@@ -5,12 +5,9 @@
   <title>Luminescence</title>
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link href="lib/css/bootstrap.min.css" rel="stylesheet">
-  <link href="lib/css/jquery-ui.css" rel="stylesheet">
-  <link href="css/index.css" rel="stylesheet">
+  <link href="app.css" rel="stylesheet">
 </head>
 <body>
-
   <nav class="navbar navbar-default navbar-fixed-top nav-tabs">
     <div class="container">
       <div class="navbar-collapse collapse" id="navbar-collapse-1">
@@ -60,16 +57,10 @@
       <div class="container"></div>
     </div>
   </div>
-  <script src="lib/jquery.js"></script>
-  <script src="lib/bootstrap.min.js"></script>
-  <script src="lib/jquery-ui.js"></script>
-  <script src="lib/ace/ace.js"></script>
-  <script src="lib/ace/ext-language_tools.js"></script>
-  <script src="src/base.js"></script>
-  <script src="lib/pixi.js"></script>
-  <script src="src/grid.js"></script>
-  <script src="src/actions.js"></script>
-  <script src="src/bots.js"></script>
-  
+  <script src="lib.js"></script>
+  <script src="app.js"></script>
+  <script >
+    require('js/entry').init();
+  </script>
 </body>
 </html>
