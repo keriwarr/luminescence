@@ -1,3 +1,4 @@
-# bug-free-dubstep
+# luminescence
 
-Currently, this site is completely pure hand-crafted static HTML/CSS
+Check out this hosted version for more details!  
+http://keri.warr.ca/luminescence/
